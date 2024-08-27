@@ -8,6 +8,20 @@ x := g.1;; y := g.2;; z:= g.3;;
 L := LowIndexNormalSubs(g, 100);;
 
 
+#finds the depth of the subgroup L[i]
+depth:=function(pars,i)
+    local p,d,dprime;
+
+    if pars[i]=[] then return 0; fi;
+    d:=0;
+    for p in pars[i] do
+        dprime:=depth(pars,p)+1;
+        if d<dprime then d:=dprime; fi;
+    od;
+
+    return d;
+end;
+
 #finds parents of the subgroup L[i] in the list L
 parents:=function(L,i)
     local pars,j;
@@ -42,6 +56,10 @@ for H in L do
 od;
 
 
+#pars[i] is the list of the parents of L[i], i.e. j is in pars[i] if L[i] is a subgroup of L[j].
+pars:=[];
 for i in [1..Length(tfL)] do
-    Print(i," ", Index(g,tfL[i]), " ",parents(tfL,i) ,"\n");
+    Add(pars,parents(tfL,i));
+    Print(i," ", Index(g,tfL[i]), " ",pars[i] ," ", depth(pars,i),"\n");
 od;
+
