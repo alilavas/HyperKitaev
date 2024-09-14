@@ -1,6 +1,6 @@
 ll:=3;
 mm:=3;
-nn:=4;;
+nn:=3;
 LoadPackage("LINS");;
 f := FreeGroup( "x", "y", "z" );;
 g := f / [ f.1^ll, f.2^mm, f.3^nn, f.1*f.2*f.3 ];;
@@ -49,7 +49,7 @@ IsTF:=function(H,x,y,z,ll,mm,nn)
     return true;
 end;
 
-#tfL is the torsion-free subset of L
+# tfL is the torsion-free subset of L
 tfL:=[];
 for H in L do
     if IsTF(H,x,y,z,ll,mm,nn) then Add(tfL,H); fi;
@@ -60,6 +60,7 @@ od;
 pars:=[];
 for i in [1..Length(tfL)] do
     Add(pars,parents(tfL,i));
-    Print(i," ", Index(g,tfL[i]), " ",pars[i] ," ", depth(pars,i),"\n");
+    Print(i," ", Index(g,tfL[i]), " ",pars[i] ," ", depth(pars,i)+1,"\n");
 od;
 
+# quit;
