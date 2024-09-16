@@ -32,17 +32,114 @@ if not IsSubgroup(g,H) then Print("ERROR: H is not a subgroup"); fi;
 if not IsNormal(g,H) then Print("ERROR: H is not a normal"); fi;
 if not IsTF(H,x,y,z) then Print("ERROR: H is not torsion free"); fi;
 
+
+ct:=CosetTable(g,H);
+
 n:=2*Index(g,H);
 adjMat:=NullMat(n,n);
-ct:=CosetTable(g,H);
 for i in [1 .. n/2] do
     adjMat[2*i,2*i-1]:=1;
     adjMat[2*i,2*ct[6,i]-1]:=2;
     adjMat[2*i,2*ct[3,i]-1]:=3;
 od;
-
 adjMat:=adjMat+TransposedMat(adjMat);
+# PrintArray(adjMat);
 
-PrintArray(adjMat);
+
+
+redFace:=function(i,ct)
+    local face,j;
+    face:=[];
+    Add(face,2*i);
+    Add(face,2*ct[6,i]-1);
+    j:=ct[4,ct[6,i]];
+    while not j=i do
+        Add(face,2*j);
+        Add(face,2*ct[6,j]-1);
+        j:=ct[4,ct[6,j]];
+    od;
+    return face;
+end;
+
+greenFace:=function(i,ct)
+    local face,j;
+    face:=[];
+    Add(face,2*i-1);
+    Add(face,2*i);
+    j:=ct[3,i];
+    while not j=i do
+        Add(face,2*j-1);
+        Add(face,2*j);
+        j:=ct[3,j];
+    od;
+    return face;
+end;
+
+blueFace:=function(i,ct)
+    local face,j;
+    face:=[];
+    Add(face,2*i);
+    Add(face,2*i-1);
+    j:=ct[5,i];
+    while not j=i do
+        Add(face,2*j);
+        Add(face,2*j-1);
+        j:=ct[5,j];
+    od;
+    return face;
+end;
+
+newFace:=function(F,f)
+    local new, j;
+    new:=true;
+    for j in [1..Length(F)] do
+        if Length(Intersection(f,F[j]))>2 then new:=false; break; fi;
+    od;
+    return new;
+end;
+
+
+n:=2*Index(g,H);
+
+Faces:=[];;
+for i in [1..Index(g,H)] do
+    fs:=[redFace(i,ct),greenFace(i,ct),blueFace(i,ct)];
+    for f in fs do
+        if newFace(Faces,f) then Add(Faces,f); fi;
+    od;
+od;
+
+Edges:=[];
+for i in [1 .. n/2] do
+    Add(Edges,[2*i,2*i-1]);
+    Add(Edges,[2*i,2*ct[6,i]-1]);
+    Add(Edges,[2*i,2*ct[3,i]-1]);
+od;
+
+
+
+
+facesHaveRightIntersection:=function(F)
+    #check if any two face have either zero or two points in common
+    local i,j;
+    for i in [1..Length(F)] do
+        for j in [1.. i-1] do
+            if not (Length(Intersection(F[i],F[j]))=0 or Length(Intersection(F[i],F[j]))=2) then
+                Print(i," ",j);
+                return false;
+            fi;
+        od;
+    od;
+    return true;
+end;
+facesHaveRightIntersection(Faces);
+
+genus:=function(V,E,F)
+    return (2-V+E-F)/2;
+end;
+
+Print("genus:",genus(n,Length(Edges),Length(Faces)));
+
+### F --d2--> E --d1--> V
 
 
