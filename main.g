@@ -35,15 +35,15 @@ parents:=function(L,i)
 end;
 
 #checks if H is torsion free. Assumes it is normal. 
-IsTF:=function(H,x,y,z,ll,mm,nn)
+IsTF:=function(H,x,y,z)
     local i;
-    for i in [1..ll-1] do
+    for i in [1..Order(x)-1] do
         if x^i in H then return false; fi;
     od;
-    for i in [1..mm-1] do
+    for i in [1..Order(y)-1] do
         if y^i in H then return false; fi;
     od;
-    for i in [1..nn-1] do
+    for i in [1..Order(z)-1] do
         if z^i in H then return false; fi;
     od;
     return true;
@@ -52,7 +52,7 @@ end;
 # tfL is the torsion-free subset of L
 tfL:=[];
 for H in L do
-    if IsTF(H,x,y,z,ll,mm,nn) then Add(tfL,H); fi;
+    if IsTF(H,x,y,z) then Add(tfL,H); fi;
 od;
 
 
