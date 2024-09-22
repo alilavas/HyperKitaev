@@ -35,6 +35,20 @@ if not IsTF(H,x,y,z) then Print("ERROR: H is not torsion free"); fi;
 
 ct:=CosetTable(g,H);
 
+
+printMatrixToFile:=function(M,filename)
+    local r,elm;
+    for r in M do
+        for elm in r do
+            AppendTo(filename,elm," ");
+        od;
+        AppendTo(filename,"\n");
+    od;
+end;
+
+printMatrixToFile(ct,"cosetTable");
+
+
 n:=2*Index(g,H);
 adjMat:=NullMat(n,n);
 for i in [1 .. n/2] do
@@ -115,6 +129,9 @@ for i in [1 .. n/2] do
     Add(Edges,[2*i,2*ct[6,i]-1]);
     Add(Edges,[2*i,2*ct[3,i]-1]);
 od;
+for e in Edges do
+    Sort(e);
+od;
 
 
 
@@ -141,5 +158,19 @@ end;
 Print("genus:",genus(n,Length(Edges),Length(Faces)));
 
 ### F --d2--> E --d1--> V
+
+d2:=NullMat(Length(Edges),Length(Faces));
+d1:=NullMat(n, Length(Edges));
+
+faceToEdges:=function(f)
+    local i,edges;
+    for i in [1..Length(f)-1] do
+        Add(edges,[f[i],f[i+1]]);
+    od;
+    Add(edges,[f[Length(f)],f[1]]);
+    for e in edges
+
+end;
+
 
 
