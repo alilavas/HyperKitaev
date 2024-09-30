@@ -422,7 +422,7 @@ function shortestNonContractableCycle(E,dE,g,dg,d1,d2, dist, prev)
                 if !isContractible(d1,d2,dg,dE,c)
                     if length(c)<L
                         systol=c
-                        L=l
+                        L=length(c)
                     end
                 end
             end
