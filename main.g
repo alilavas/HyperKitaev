@@ -106,6 +106,7 @@ for i in [1..Length(tfL)] do
 od;
 
 
-PrintCosetTableToFile(g,tfL[1],"cosetTable");
+# Use the following to save the coset table 
+# PrintCosetTableToFile(g,tfL[1],"cosetTable");
 
 # quit;
