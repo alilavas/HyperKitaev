@@ -1,11 +1,11 @@
-ll:=3;
-mm:=3;
-nn:=3;
+ll:=4;
+mm:=4;
+nn:=4;
 LoadPackage("LINS");;
 f := FreeGroup( "x", "y", "z" );;
 g := f / [ f.1^ll, f.2^mm, f.3^nn, f.1*f.2*f.3 ];;
 x := g.1;; y := g.2;; z:= g.3;;
-L := LowIndexNormalSubs(g, 100);;
+L := LowIndexNormalSubs(g, 367);;
 
 
 #finds the depth of the subgroup L[i]
@@ -49,6 +49,47 @@ IsTF:=function(H,x,y,z)
     return true;
 end;
 
+#rotate an element cyclically
+RotateGen:=function(g,x,y,z)
+    if g=x then return y; fi;
+    if g=x^-1 then return y^-1; fi;
+    if g=y then return z; fi;
+    if g=y^-1 then return z^-1; fi;
+    if g=z then return x; fi;
+    if g=z^-1 then return x^-1; fi;
+end;
+RotateWord:=function(w,x,y,z)
+    local i,cw;
+    cw:=x^0;
+    for i in [1..Length(w)] do
+        cw:=cw*RotateGen(Subword( w, i, i ),x,y,z);
+    od;
+    return cw;
+end;
+#check if a subgroup is symmetric under cyclic rotation of its generators
+IsCyclicSymmetric:=function(H,x,y,z)
+    local i,gens,rotgens;
+    gens:=GeneratorsOfGroup(H);
+    rotgens:=[];
+    for i in [1..Length(gens)] do
+        rotgens[i]:=RotateWord(gens[i],x,y,z);
+    od;
+    return Group(rotgens)=H;
+end;
+
+#save the coset table matrix in a file
+PrintCosetTableToFile:=function(g,H,filename)
+    local M,r,elm;
+    M:=CosetTable(g,H);
+    PrintTo(filename,"");
+    for r in M do
+        for elm in r do
+            AppendTo(filename,elm," ");
+        od;
+        AppendTo(filename,"\n");
+    od;
+end;
+
 # tfL is the torsion-free subset of L
 tfL:=[];
 for H in L do
@@ -56,11 +97,15 @@ for H in L do
 od;
 
 
-#pars[i] is the list of the parents of L[i], i.e. j is in pars[i] if L[i] is a subgroup of L[j].
+# pars[i] is the list of the parents of L[i], i.e. j is in pars[i] if L[i] is a subgroup of L[j].
 pars:=[];
 for i in [1..Length(tfL)] do
     Add(pars,parents(tfL,i));
-    Print(i," ", Index(g,tfL[i]), " ",pars[i] ," ", depth(pars,i)+1,"\n");
+    Print(i," ", Index(g,tfL[i]), " ",pars[i] ," ", depth(pars,i)+1, " ");
+    if IsCyclicSymmetric(tfL[i],x,y,z) then Print("cyclic \n"); else  Print("non-cyclic \n"); fi;
 od;
+
+
+PrintCosetTableToFile(g,tfL[1],"cosetTable");
 
 # quit;
