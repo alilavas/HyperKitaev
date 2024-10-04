@@ -672,3 +672,35 @@ function coloredEdges(E,coloredAdjMat,color)
     end
     return cE
 end
+
+
+
+"""
+    crossedDoubledGraph(g,E)
+
+given a graph g and a set E of Edges, return a graph which corresponding
+to two copies of the original graph on top of each other, the edges E 
+in each copy removed and replaced by the corresponding crossing between
+the two copy. This can be used to find the nontrivial conjugate dual cycle to a
+nontrivial cycle, based on the algorithm described in https://arxiv.org/abs/2308.03750
+"""
+function crossedDoubledGraph(g,E)
+    n=length(g)
+    g_2=deepcopy(g)
+    append!(g_2,[x.+n for x in g])
+    
+    for e in E
+        u,v=e
+        removeEdge!(g_2,e)
+        removeEdge!(g_2,e.+n)
+
+        push!(g_2[u],v+n)
+        push!(g_2[v+n],u)
+
+        push!(g_2[v],u+n)
+        push!(g_2[u+n],v)
+    end
+
+    return g_2
+end
+

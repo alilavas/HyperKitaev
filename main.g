@@ -5,7 +5,14 @@ LoadPackage("LINS");;
 f := FreeGroup( "x", "y", "z" );;
 g := f / [ f.1^ll, f.2^mm, f.3^nn, f.1*f.2*f.3 ];;
 x := g.1;; y := g.2;; z:= g.3;;
-L := LowIndexNormalSubs(g, 367);;
+
+
+#The following fixes a bug when looking for large indices
+#LINS_MaxPGenerators should be around the max index we are looking for
+MakeReadWriteGlobal("LINS_MaxPGenerators");
+LINS_MaxPGenerators := 1000;;
+
+L := LowIndexNormalSubs(g, 672);;
 
 
 #finds the depth of the subgroup L[i]
@@ -107,6 +114,6 @@ od;
 
 
 # Use the following to save the coset table 
-# PrintCosetTableToFile(g,tfL[1],"cosetTable");
+PrintCosetTableToFile(g,tfL[1],"cosetTable");
 
 # quit;
